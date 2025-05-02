@@ -1,10 +1,14 @@
 import EmergencyForm from "./EmergencyForm";
 
+import React from 'react';
+import FirstAid from './FirstAid/FirstAid'
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold text-center">HelpMe - Emergency App</h1>
-      <EmergencyForm />
+    <div >
+      {/* <h1 className="text-3xl font-bold text-center">HelpMe - Emergency App</h1> */}
+      {/* <EmergencyForm /> */}
+      <FirstAid />
     </div>
   );
 }
