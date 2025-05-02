@@ -39,7 +39,7 @@ const FirstAid = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">Quick First Aid Guide</h1>
+      <h1 className="text-3xl font-bold text-center mb-6 text-red-600">Quick First Aid Guide</h1>
 
       <input
         type="text"

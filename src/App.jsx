@@ -18,6 +18,8 @@ function App() {
       <FirstAid />
       <ResourceMapping location={location} loading={loading} error={error} />
       <User />
+      <Login />
+      <Signup />
     </div>
   );
 }
