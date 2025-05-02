@@ -97,7 +97,7 @@ const HomePage = () => {
         <div className="text-center mb-12 max-w-lg">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Emergency Assistance</h2>
           <p className="text-gray-600">
-            Press the SOS button below. It will automatically send an SMS in 30 seconds unless canceled.
+            Press the SOS button below. It will automatically send an SMS in 10 seconds unless canceled.
           </p>
         </div>
 
@@ -120,7 +120,7 @@ const HomePage = () => {
         {sosActive && (
           <div className="mt-8 text-center">
             <p className="text-red-600 font-semibold animate-pulse">
-              Sending SMS in 30 seconds. Stay calm.
+              Sending SMS in 10 seconds. Stay calm.
             </p>
           </div>
         )}
