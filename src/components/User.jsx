@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { User, MapPin, Phone, AlertCircle, Calendar, Droplet, Weight, FileText, Plus } from 'lucide-react';
+import { User, MapPin, Phone, AlertCircle, Calendar, Droplet, Weight, FileText, Plus, Trash2 } from 'lucide-react';
+import { saveData, getData } from "./utils/storage";
 
 const UserProfilePage = () => {
   const [name, setName] = useState('');
@@ -9,11 +10,17 @@ const UserProfilePage = () => {
   const [allergies, setAllergies] = useState('');
   const [weight, setWeight] = useState('');
   const [location, setLocation] = useState('');
-  const [emergencyContact, setEmergencyContact] = useState('');
   const [medicalFile, setMedicalFile] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  
+  // Emergency contacts state
+  const [contacts, setContacts] = useState([]);
+  const [currentContact, setCurrentContact] = useState({
+    name: '',
+    phone: ''
+  });
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -28,7 +35,17 @@ const UserProfilePage = () => {
         }
       );
     }
+    
+    // Load emergency contacts
+    loadContacts();
   }, []);
+
+  const loadContacts = async () => {
+    const savedContacts = await getData("emergency_contacts");
+    if (savedContacts) {
+      setContacts(savedContacts);
+    }
+  };
 
   const handleFileChange = (e) => {
     setMedicalFile(e.target.files[0]);
@@ -53,11 +70,36 @@ const UserProfilePage = () => {
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitSuccess(true);
-      console.log('User Data:', { name, age, bloodGroup, dob, allergies, weight, location, emergencyContact, medicalFile });
+      console.log('User Data:', { name, age, bloodGroup, dob, allergies, weight, location, contacts, medicalFile });
       
       // Reset success message after 3 seconds
       setTimeout(() => setSubmitSuccess(false), 3000);
     }, 1500);
+  };
+
+  // Handle contact input change
+  const handleContactChange = (e) => {
+    setCurrentContact({
+      ...currentContact,
+      [e.target.id]: e.target.value
+    });
+  };
+
+  // Save contact
+  const saveContact = async () => {
+    if (currentContact.name && currentContact.phone) {
+      const updatedContacts = [...contacts, currentContact];
+      setContacts(updatedContacts);
+      await saveData("emergency_contacts", updatedContacts);
+      setCurrentContact({ name: '', phone: '' }); // Reset form
+    }
+  };
+
+  // Delete contact
+  const deleteContact = async (indexToDelete) => {
+    const updatedContacts = contacts.filter((_, index) => index !== indexToDelete);
+    setContacts(updatedContacts);
+    await saveData("emergency_contacts", updatedContacts);
   };
 
   const InputField = ({ icon, label, id, type = "text", value, onChange, placeholder, readonly = false }) => (
@@ -257,68 +299,82 @@ const UserProfilePage = () => {
             </div>
           </div>
 
-          {/* Column 3: Emergency Contacts */}
+          {/* Column 3: Emergency Contacts - Updated with functionality */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-800">Emergency Contacts</h2>
               <Phone size={22} className="text-red-500" />
             </div>
 
-            {/* Contact 1 */}
+            {/* Contact Form */}
             <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <h3 className="text-md font-medium text-gray-700 mb-2">Primary Contact</h3>
+              <h3 className="text-md font-medium text-gray-700 mb-2">Add Contact</h3>
               
               <InputField 
                 icon={<User size={18} className="text-gray-500" />}
                 label="Name"
-                id="contactName1"
+                id="name"
                 placeholder="Enter contact name"
+                value={currentContact.name}
+                onChange={handleContactChange}
               />
               
               <InputField 
                 icon={<Phone size={18} className="text-gray-500" />}
                 label="Phone Number"
-                id="contact1"
+                id="phone"
                 placeholder="Enter phone number"
+                value={currentContact.phone}
+                onChange={handleContactChange}
               />
+
+              <button
+                onClick={saveContact}
+                className="mt-2 w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition duration-200 flex items-center justify-center gap-2"
+              >
+                <Plus size={16} />
+                Add Contact
+              </button>
             </div>
             
-            {/* Contact 2 */}
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <h3 className="text-md font-medium text-gray-700 mb-2">Secondary Contact</h3>
+            {/* Contact List */}
+            <div>
+              <h3 className="text-md font-medium text-gray-700 mb-2">Saved Contacts</h3>
               
-              <InputField 
-                icon={<User size={18} className="text-gray-500" />}
-                label="Name"
-                id="contactName2"
-                placeholder="Enter contact name"
-              />
-              
-              <InputField 
-                icon={<Phone size={18} className="text-gray-500" />}
-                label="Phone Number"
-                id="contact2"
-                placeholder="Enter phone number"
-              />
-            </div>
-            
-            {/* Contact 3 */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="text-md font-medium text-gray-700 mb-2">Additional Contact</h3>
-              
-              <InputField 
-                icon={<User size={18} className="text-gray-500" />}
-                label="Name"
-                id="contactName3"
-                placeholder="Enter contact name"
-              />
-              
-              <InputField 
-                icon={<Phone size={18} className="text-gray-500" />}
-                label="Phone Number"
-                id="contact3"
-                placeholder="Enter phone number"
-              />
+              {contacts.length === 0 ? (
+                <div className="bg-gray-50 rounded-lg p-4 text-gray-500 text-center">
+                  No contacts added yet
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {contacts.map((contact, index) => (
+                    <div key={index} className="bg-gray-50 rounded-lg p-4 flex flex-col gap-2">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">{contact.name}</p>
+                          <p className="text-gray-600">{contact.phone}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <a 
+                            href={`tel:${contact.phone}`} 
+                            className="text-blue-600 hover:text-blue-800"
+                            title="Call"
+                          >
+                            <Phone size={18} />
+                          </a>
+                          <button 
+                            onClick={() => deleteContact(index)}
+                            className="text-red-600 hover:text-red-800"
+                            title="Delete"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

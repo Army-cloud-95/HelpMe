@@ -30,7 +30,7 @@ const ResourceMapping = ({ location, loading, error }) => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
-      <h2 className="text-2xl font-bold mb-4 text-center">Nearby Resources</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center text-red-600">Nearby Resources</h2>
       
       {/* Show loading or error state */}
       {loading && <p className="text-center text-gray-600">Getting your location...</p>}
