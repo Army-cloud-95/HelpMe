@@ -1,66 +1,151 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Bell, MapPin, Heart, LogIn, UserPlus, Menu, X } from 'lucide-react';
 
 const HomePage = () => {
-  const handleSOS = () => {
-    const phoneNumber = '+1234567890';  // Emergency contact number (replace with the actual number)
-    const message = 'Emergency! I need help.';  // Default emergency message
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [sosActive, setSosActive] = useState(false);
 
-    // Create the SMS link
+  const handleSOS = () => {
+    setSosActive(true);
+
+    // Replace with your real emergency number
+    const phoneNumber = '+1234567890';
+    const message = 'Emergency! I need help.';
     const smsLink = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
 
-    // Trigger the SMS app (this will open the SMS app with the pre-filled message)
-    window.location.href = smsLink;
+    setTimeout(() => {
+      window.location.href = smsLink;
+    }, 10000); // 30 seconds delay
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-red-600 text-white px-6 py-4 shadow-md flex flex-col md:flex-row md:items-center md:justify-between">
-        <h1 className="text-2xl font-bold mb-4 md:mb-0">HelpMe</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-red-600 text-white shadow-lg">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="text-2xl font-bold tracking-tight">HelpMe</div>
 
-        <div className="flex justify-center space-x-4 mb-4 md:mb-0">
-          <Link to="/resource-mapping"></Link>
-          <button className="flex items-center bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-gray-200">
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.553-1.946L9 2v18zm0 0l6-3V2l-6 3m6 15l5.447-2.724A2 2 0 0021 15.382V5.618a2 2 0 00-1.553-1.946L15 2v18z"></path>
-            </svg>
-            Resource Mapping
-          </button>
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-4">
+              <button className="flex items-center px-4 py-2 rounded-md bg-red-700 hover:bg-red-800 transition duration-200">
+                <MapPin className="w-5 h-5 mr-2" />
+                Resource Map
+              </button>
+              <button className="flex items-center px-4 py-2 rounded-md bg-red-700 hover:bg-red-800 transition duration-200">
+                <Heart className="w-5 h-5 mr-2" />
+                First Aid
+              </button>
+            </nav>
 
-          <button className="flex items-center bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-gray-200">
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 4v16m8-8H4"></path>
-            </svg>
-            First Aid
-          </button>
+            {/* Auth Buttons - Desktop */}
+            <div className="hidden md:flex items-center space-x-4">
+              <button className="flex items-center px-4 py-2 rounded-md bg-white text-red-600 hover:bg-gray-100 transition duration-200">
+                <LogIn className="w-5 h-5 mr-2" />
+                Login
+              </button>
+              <button className="flex items-center px-4 py-2 rounded-md bg-white text-red-600 hover:bg-gray-100 transition duration-200">
+                <UserPlus className="w-5 h-5 mr-2" />
+                Sign Up
+              </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="flex md:hidden">
+              <button
+                className="p-2 rounded-md hover:bg-red-700 focus:outline-none"
+                onClick={toggleMenu}
+              >
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+          </div>
         </div>
+      </header>
 
-        <div className="flex space-x-4 justify-center md:justify-end">
-          <Link to="/Login">
-            <button className="flex items-center bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-gray-200">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 12H3m0 0l4-4m-4 4l4 4m9-9v14"></path>
-              </svg>
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-red-500 shadow-lg">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            <button className="flex items-center w-full px-4 py-3 rounded-md bg-red-600 hover:bg-red-700 text-white transition duration-200">
+              <MapPin className="w-5 h-5 mr-3" />
+              Resource Map
+            </button>
+            <button className="flex items-center w-full px-4 py-3 rounded-md bg-red-600 hover:bg-red-700 text-white transition duration-200">
+              <Heart className="w-5 h-5 mr-3" />
+              First Aid
+            </button>
+            <button className="flex items-center w-full px-4 py-3 rounded-md bg-white text-red-600 hover:bg-gray-100 transition duration-200">
+              <LogIn className="w-5 h-5 mr-3" />
               Login
             </button>
-          </Link>
+            <button className="flex items-center w-full px-4 py-3 rounded-md bg-white text-red-600 hover:bg-gray-100 transition duration-200">
+              <UserPlus className="w-5 h-5 mr-3" />
+              Sign Up
+            </button>
+          </div>
+        </div>
+      )}
 
-          <button className="flex items-center bg-white text-red-600 px-4 py-2 rounded-lg hover:bg-gray-200">
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 21v-2a4 4 0 00-3-3.87M12 3a4 4 0 100 8 4 4 0 000-8zM6 21v-2a4 4 0 013-3.87"></path>
-            </svg>
-            Signup
+      {/* Main Content */}
+      <main className="container mx-auto px-4 flex flex-col items-center justify-center py-12 flex-grow">
+        {/* Info Text */}
+        <div className="text-center mb-12 max-w-lg">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">Emergency Assistance</h2>
+          <p className="text-gray-600">
+            Press the SOS button below. It will automatically send an SMS in 30 seconds unless canceled.
+          </p>
+        </div>
+
+        {/* SOS Button */}
+        <div className="relative">
+          {sosActive && (
+            <div className="absolute inset-0 rounded-full bg-red-600 opacity-30 animate-ping"></div>
+          )}
+          <button
+            onClick={handleSOS}
+            className={`relative z-10 bg-red-600 text-white text-3xl font-bold py-8 px-12 rounded-full shadow-xl hover:shadow-2xl transform transition duration-300 ${
+              sosActive ? 'animate-pulse bg-red-700' : 'hover:scale-105'
+            }`}
+          >
+            SOS
           </button>
         </div>
-      </nav>
 
-      <main className="flex items-center justify-center h-[80vh]">
-        <button
-          onClick={handleSOS}
-          className="bg-red-600 text-white text-3xl font-bold py-6 px-10 rounded-full animate-pulse shadow-lg hover:scale-105 transition duration-300"
-        >
-          SOS
-        </button>
+        {/* Status Text */}
+        {sosActive && (
+          <div className="mt-8 text-center">
+            <p className="text-red-600 font-semibold animate-pulse">
+              Sending SMS in 30 seconds. Stay calm.
+            </p>
+          </div>
+        )}
+
+        {/* Quick Access Buttons */}
+        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-2xl">
+          <button className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition duration-200">
+            <MapPin className="w-8 h-8 text-red-600 mb-2" />
+            <span className="text-gray-700 font-medium">Nearby Hospitals</span>
+          </button>
+          <button className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition duration-200">
+            <Bell className="w-8 h-8 text-red-600 mb-2" />
+            <span className="text-gray-700 font-medium">Emergency Contacts</span>
+          </button>
+          <button className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition duration-200">
+            <Heart className="w-8 h-8 text-red-600 mb-2" />
+            <span className="text-gray-700 font-medium">Medical Info</span>
+          </button>
+          <button className="flex flex-col items-center justify-center p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition duration-200">
+            <div className="w-8 h-8 flex items-center justify-center text-red-600 mb-2">
+              <span className="text-xl font-bold">+</span>
+            </div>
+            <span className="text-gray-700 font-medium">More Options</span>
+          </button>
+        </div>
       </main>
     </div>
   );
